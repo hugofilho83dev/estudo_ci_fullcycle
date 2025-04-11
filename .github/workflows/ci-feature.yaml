@@ -11,16 +11,36 @@ jobs:
       - uses: actions/labeler@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-     
+
+      - name: Get the latest tag
+        id: get_latest_tag
+        run: |
+            latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+            echo "Latest tag: $latest_tag"
+            if [ -z "$latest_tag" ]; then
+                new_tag="v1.0.0"
+            else
+                new_tag=$(echo $latest_tag | awk -F. '{$NF+=1; OFS="."; print $0}')
+            fi
+            echo "new_tag=$new_tag" >> $GITHUB_ENV
+
+      - name: Create a Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.new_tag }}
+          release_name: "Release ${{ env.new_tag }}"
+        env:
+            GITHUB_TOKEN: ${{ github.token }}
+
       - name: Check out repository code
         uses: actions/checkout@v2
-
       - name: pull-request
         uses: repo-sync/pull-request@v2
         with:
           destination_branch: "develop"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          pr_label: "feature, automated pr" # Labels to add to the PR
-          pr_title: "PR develop" # Title of the PR
+          pr_label: "feature, automated pr"
+          pr_title: "PR -> develop"
           pr_body: "This is an automated PR to merge changes from feature/* into develop."
           pr_draft: false
