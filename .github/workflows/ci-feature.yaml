@@ -30,19 +30,19 @@ jobs:
             echo "Nenhuma tag encontrada. Criando a primeira tag."
             new_tag="v1.0.0"
           else
-                # Obtém a última tag e incrementa
-                latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
-                echo "Última tag encontrada: $latest_tag"
+            # Obtém a última tag e incrementa
+            latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+            echo "Última tag encontrada: $latest_tag"
 
-                # Remove o prefixo 'v' da tag para manipulação numérica
-                version_number=$(echo $latest_tag | sed 's/^v//')
+            # Remove o prefixo 'v' da tag para manipulação numérica
+            version_number=$(echo $latest_tag | sed 's/^v//')
 
-                # Incrementa a última parte da versão
-                new_version=$(echo $version_number | awk -F. '{$NF+=1; OFS="."; print $0}')
+            # Incrementa a última parte da versão
+            new_version=$(echo $version_number | awk -F. '{$NF+=1; OFS="."; print $0}')
 
-                # Adiciona o prefixo 'v' novamente
-                new_tag="v$new_version"
-                echo "Else: $new_tag"
+            # Adiciona o prefixo 'v' novamente
+            new_tag="v$new_version"
+            echo "Else: $new_tag"
           fi
           echo "Nova tag gerada: $new_tag"
           echo "new_tag=$new_tag" >> $GITHUB_ENV
@@ -63,6 +63,6 @@ jobs:
           destination_branch: "develop"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_label: "feature, automated pr"
-          pr_title: "PR criada automaticamente ${{ github.ref }}"
+          pr_title: "PR criada automaticamente ${{ github.ref_name }}"
           pr_body: "This is an automated PR to merge changes from feature/* into develop."
           pr_draft: false
