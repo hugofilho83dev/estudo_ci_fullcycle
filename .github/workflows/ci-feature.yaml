@@ -11,15 +11,7 @@ jobs:
       - uses: actions/labeler@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create a Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: "v1.0.0"
-          release_name: "Release v1.0.0"
-        env:
-            GITHUB_TOKEN: ${{ github.token }}
-
+     
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: pull-request
@@ -28,4 +20,6 @@ jobs:
           destination_branch: "develop"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_label: "feature, automated pr"
-          pr_title: "[Example] Simple demo"
+          pr_title: "PR develop"
+          pr_body: "This is an automated PR to merge changes from feature/* into develop."
+          pr_draft: false
