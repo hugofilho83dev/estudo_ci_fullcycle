@@ -21,6 +21,9 @@ jobs:
 
       - name: Run tests # Run tests
         run: go test -v ./... # Added verbose flag for detailed test output
+
+      - name: Save branch name to environment
+        run: echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
   
       - name: pull-request
         uses: repo-sync/pull-request@v2
@@ -28,6 +31,6 @@ jobs:
           destination_branch: "develop"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_label: "feature, automated pr"
-          pr_title: "PR criada automaticamente ${{ github.ref_name }}"
+          pr_title: "PR criada automaticamente ${{ env.BRANCH_NAME }}"
           pr_body: "This is an automated PR to merge changes from feature/* into develop."
           pr_draft: false
