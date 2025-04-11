@@ -7,6 +7,9 @@ on:
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.23.0,1.24.0] # Specify the Go version you want to use
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -14,7 +17,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2 # Set up Go environment
         with:
-            go-version: '1.24.0' # Specify the Go version you want to use
+            go-version: ${{ matrix.go-version }} # Specify the Go version from matrix
 
       - name: Install dependencies
         run: go mod download # Download dependencies
