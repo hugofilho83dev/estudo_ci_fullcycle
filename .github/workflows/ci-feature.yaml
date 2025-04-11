@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - feature/*
-
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
