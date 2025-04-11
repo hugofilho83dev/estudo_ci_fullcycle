@@ -8,18 +8,31 @@ jobs:
   create-pull-request:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-     
       - name: Check out repository code
         uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2 # Set up Go environment
+        with:
+            go-version: '1.24.0' # Specify the Go version you want to use
+
+      - name: Install dependencies
+        run: go mod download # Download dependencies
+
+      - name: Run tests # Run tests
+        run: go test -v ./... # Added verbose flag for detailed test output
+
+      - name: Save branch name to environment
+        run: |
+          sanitized_branch_name=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH_NAME=$sanitized_branch_name" >> $GITHUB_ENV
+  
       - name: pull-request
         uses: repo-sync/pull-request@v2
         with:
           destination_branch: "develop"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_label: "feature, automated pr"
-          pr_title: "PR develop"
-          pr_body: "This is an automated PR to merge changes from feature/* into develop."
+          pr_title: "PR criada automaticamente $SANITIZED_BRANCH_NAME"
+          pr_body: "This is an automated PR to merge changes from $SANITIZED_BRANCH_NAME into develop."
           pr_draft: false
