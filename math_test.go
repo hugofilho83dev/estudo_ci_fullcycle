@@ -9,7 +9,7 @@ import "testing"
 // - Soma envolvendo o número zero
 func TestSoma(t *testing.T) {
 	t.Run("Soma de números positivos", func(t *testing.T) {
-		result := Soma(1, 5)
+		result := Soma(12, 5)
 		expected := 6
 
 		if result != expected {
