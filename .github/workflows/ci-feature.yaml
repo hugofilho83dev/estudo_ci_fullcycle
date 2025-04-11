@@ -11,21 +11,32 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - uses: actions/labeler@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2 # Set up Go environment
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+            go-version: '1.24.0' # Specify the Go version you want to use
+
+      - name: Install dependencies
+        run: go mod download # Download dependencies
+
+      - name: Run tests # Run tests
+        run: go test -v ./... # Added verbose flag for detailed test output
 
       - name: Get the latest tag
         id: get_latest_tag
         run: |
-            latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-            echo "Latest tag: $latest_tag"
-            if [ -z "$latest_tag" ]; then
-                new_tag="v1.0.0"
-            else
-                new_tag=$(echo $latest_tag | awk -F. '{$NF+=1; OFS="."; print $0}')
-            fi
-            echo "new_tag=$new_tag" >> $GITHUB_ENV
+          # Verifica se existem tags no repositório
+          if [ $(git tag | wc -l) -eq 0 ]; then
+            echo "Nenhuma tag encontrada. Criando a primeira tag."
+            new_tag="v1.0.0"
+          else
+            # Obtém a última tag e incrementa
+            latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+            echo "Última tag encontrada: $latest_tag"
+            new_tag=$(echo $latest_tag | awk -F. '{$NF+=1; OFS="."; print $0}')
+          fi
+          echo "Nova tag gerada: $new_tag"
+          echo "new_tag=$new_tag" >> $GITHUB_ENV
 
       - name: Create a Release
         id: create_release
@@ -34,7 +45,7 @@ jobs:
           tag_name: ${{ env.new_tag }}
           release_name: "Release ${{ env.new_tag }}"
         env:
-            GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
 
       
       - name: pull-request
@@ -43,6 +54,6 @@ jobs:
           destination_branch: "develop"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_label: "feature, automated pr"
-          pr_title: "PR ${{ github.ref }}"
+          pr_title: "PR criada automaticamente ${{ github.ref }}"
           pr_body: "This is an automated PR to merge changes from feature/* into develop."
           pr_draft: false
