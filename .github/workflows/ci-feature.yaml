@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - feature/*
-
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
@@ -33,6 +32,6 @@ jobs:
           destination_branch: "develop"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_label: "feature, automated pr"
-          pr_title: "PR criada automaticamente $SANITIZED_BRANCH_NAME"
-          pr_body: "This is an automated PR to merge changes from $SANITIZED_BRANCH_NAME into develop."
+          pr_title: "PR criada automaticamente ${{ env.SANITIZED_BRANCH_NAME }}"
+          pr_body: "This is an automated PR to merge changes from ${{ env.SANITIZED_BRANCH_NAME }} into develop."
           pr_draft: false
