@@ -25,11 +25,6 @@ jobs:
       - name: Run tests # Run tests
         run: go test -v ./... # Added verbose flag for detailed test output
 
-      - name: Save branch name to environment
-        run: |
-          sanitized_branch_name=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
-          echo "SANITIZED_BRANCH_NAME=$sanitized_branch_name" >> $GITHUB_ENV
-  
       - name: pull-request
         uses: repo-sync/pull-request@v2
         with:
