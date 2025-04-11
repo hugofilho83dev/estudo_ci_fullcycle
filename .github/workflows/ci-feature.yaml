@@ -20,6 +20,6 @@ jobs:
           destination_branch: "develop"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_label: "feature, automated pr"
-          pr_title: "PR -> develop"
+          pr_title: "PR develop"
           pr_body: "This is an automated PR to merge changes from feature/* into develop."
           pr_draft: false
