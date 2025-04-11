@@ -1,0 +1,31 @@
+name: Pull Request Action
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create a Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: "v1.0.0"
+          release_name: "Release v1.0.0"
+        env:
+            GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
+        with:
+          destination_branch: "develop"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_label: "feature, automated pr"
+          pr_title: "[Example] Simple demo"
